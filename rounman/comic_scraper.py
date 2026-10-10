@@ -25,11 +25,11 @@ from threading import Lock
 from typing import Sequence
 from urllib.parse import parse_qs, urldefrag, urljoin, urlparse, urlunparse
 
-import requests
 from bs4 import BeautifulSoup, Tag
+from curl_cffi.const import CurlHttpVersion, CurlOpt, CurlSslVersion
+from curl_cffi.requests import Session
+from curl_cffi.requests.exceptions import ProxyError, RequestException
 from PIL import Image
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 
 
 DEFAULT_START_URL = "https://rouman5.com/books?continued=false"
@@ -41,6 +41,8 @@ USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36"
 )
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+MAX_REQUEST_RETRIES = 4
 
 LOGGER = logging.getLogger("comic_scraper")
 _manifest_lock = Lock()
@@ -151,22 +153,26 @@ def is_probable_book_link(anchor: Tag, page_url: str) -> bool:
         return False
     text = clean_text(anchor.get_text(" ", strip=True))
     path = path_without_query(href)
-    if looks_like_chapter_url(href, text):
+    known_detail = bool(re.fullmatch(r"/(?:book|books|comic|comics|manhua|detail|title)/[^/]+", path))
+    if looks_like_chapter_url(href, text) and not known_detail:
         return False
-    if re.search(r"/(?:login|register|account|category|categories|tag|tags|author|authors|search|contact|about)(?:/|$)", path):
+    if re.search(
+        r"/(?:home|login|register|auth|account|category|categories|tag|tags|author|authors|search|"
+        r"contact|about|api|app-download|games|my-book-shelf|read-history)(?:/|$)",
+        path,
+    ):
         return False
     if re.search(r"\.(?:css|js|json|xml|jpg|jpeg|png|gif|webp|svg|ico)$", path):
         return False
 
     classes = " ".join(anchor.get("class", []))
+    nearby_parents = [parent for parent in anchor.parents if isinstance(parent, Tag)][:3]
     parent_classes = " ".join(
         cls
-        for parent in anchor.parents
-        if isinstance(parent, Tag)
+        for parent in nearby_parents
         for cls in parent.get("class", [])
     )
-    context = f"{classes} {parent_classes} {nearest_context_text(anchor)}".lower()
-    known_detail = re.search(r"/(?:book|books|comic|comics|manhua|detail|title)(?:/|$)", path)
+    context = f"{classes} {parent_classes}".lower()
     card_context = re.search(r"book|comic|manga|manhua|cover|catalog|item|card", context)
     has_title = bool(text) or bool(anchor.find("img")) or bool(anchor.get("title"))
     return bool(known_detail or (card_context and has_title))
@@ -210,7 +216,43 @@ def chapter_number(text: str) -> int | None:
     return int(match.group(1)) if match else None
 
 
+def chapter_url_index(chapter_url: str, book_url: str) -> int | None:
+    book_path = path_without_query(book_url)
+    chapter_path = path_without_query(chapter_url)
+    match = re.fullmatch(rf"{re.escape(book_path)}/(\d+)", chapter_path)
+    return int(match.group(1)) if match else None
+
+
+def chapter_belongs_to_book(chapter_url: str, book_url: str) -> bool:
+    if not same_site(chapter_url, book_url):
+        return False
+    book_path = path_without_query(book_url).rstrip("/")
+    chapter_path = path_without_query(chapter_url)
+    return chapter_path.startswith(f"{book_path}/")
+
+
 def discover_chapters(soup: BeautifulSoup, book_url: str) -> list[tuple[str, str]]:
+    catalog = soup.select_one('section[aria-label="章節目錄"]')
+    chapter_anchors = catalog.select("a.site-chapter-link[href]") if catalog else []
+    if chapter_anchors:
+        found: list[tuple[int, str, str]] = []
+        seen: set[str] = set()
+        for anchor in chapter_anchors:
+            href = canonical_url(book_url, anchor.get("href"))
+            if not href or href in seen or not same_site(href, book_url):
+                continue
+            url_index = chapter_url_index(href, book_url)
+            if url_index is None:
+                continue
+            title_node = anchor.select_one("[title]")
+            title = clean_text(title_node.get("title") if title_node else anchor.get_text(" ", strip=True))
+            if not title:
+                title = f"第{url_index + 1}話"
+            seen.add(href)
+            found.append((url_index, href, title))
+        found.sort(key=lambda item: item[0])
+        return [(href, title) for _, href, title in found]
+
     found: list[tuple[str, str, int | None]] = []
     seen: set[str] = set()
     book_path = path_without_query(book_url)
@@ -247,6 +289,10 @@ def is_image_url(url: str) -> bool:
 def is_placeholder_image(url: str) -> bool:
     name = Path(urlparse(url).path).name.lower()
     return name in {
+        "android-chrome-192x192.png",
+        "android-chrome-512x512.png",
+        "apple-touch-icon.png",
+        "favicon.ico",
         "loading.gif",
         "lazy.gif",
         "blank.gif",
@@ -272,6 +318,20 @@ def srcset_urls(value: str | None) -> list[str]:
     return [url for _, url in sorted(entries)]
 
 
+def embedded_json_array(raw_html: str, key: str) -> list:
+    decoded = html_lib.unescape(raw_html).replace("\\/", "/")
+    pattern = re.compile(rf"\b{re.escape(key)}\s*:\s*(?:\$R\[\d+\]\s*=\s*)?")
+    decoder = json.JSONDecoder()
+    for match in pattern.finditer(decoded):
+        try:
+            value, _ = decoder.raw_decode(decoded[match.end() :])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, list):
+            return value
+    return []
+
+
 def extract_image_urls(soup: BeautifulSoup, page_url: str, raw_html: str = "") -> list[str]:
     result: list[str] = []
     seen: set[str] = set()
@@ -282,6 +342,12 @@ def extract_image_urls(soup: BeautifulSoup, page_url: str, raw_html: str = "") -
             return
         seen.add(url)
         result.append(url)
+
+    for candidate in embedded_json_array(raw_html, "imagePaths"):
+        if isinstance(candidate, str):
+            add(candidate)
+    if result:
+        return result
 
     for image in soup.select("img"):
         candidates: list[str] = []
@@ -357,6 +423,47 @@ def existing_valid_image(directory: Path, stem: str) -> Path | None:
     return None
 
 
+def existing_chapter_directory(book_dir: Path, chapter_url: str, desired: Path) -> Path:
+    if desired.exists():
+        return desired
+    for manifest_path in book_dir.glob(f"*/{MANIFEST_NAME}"):
+        manifest = load_manifest(manifest_path)
+        if manifest.get("chapter_url") != chapter_url:
+            continue
+        current = manifest_path.parent
+        if current == desired:
+            return desired
+        try:
+            current.rename(desired)
+            LOGGER.info("章节目录已按网页标题重命名: %s -> %s", current.name, desired.name)
+            return desired
+        except OSError as error:
+            LOGGER.warning("无法重命名章节目录 %s: %s", current, error)
+            return current
+    return desired
+
+
+def quarantine_foreign_chapter_directories(book_dir: Path, book_url: str) -> None:
+    quarantine_dir = book_dir / "_旧错误目录"
+    for manifest_path in list(book_dir.glob(f"*/{MANIFEST_NAME}")):
+        manifest = load_manifest(manifest_path)
+        chapter_url = manifest.get("chapter_url")
+        if not isinstance(chapter_url, str) or chapter_belongs_to_book(chapter_url, book_url):
+            continue
+        current = manifest_path.parent
+        quarantine_dir.mkdir(exist_ok=True)
+        target = quarantine_dir / current.name
+        suffix = 2
+        while target.exists():
+            target = quarantine_dir / f"{current.name}_{suffix}"
+            suffix += 1
+        try:
+            current.rename(target)
+            LOGGER.warning("已隔离误抓的章节目录: %s -> %s", current.name, target)
+        except OSError as error:
+            LOGGER.warning("无法隔离误抓的章节目录 %s: %s", current, error)
+
+
 class ComicCrawler:
     def __init__(
         self,
@@ -364,28 +471,43 @@ class ComicCrawler:
         workers: int = 4,
         timeout: float = 30.0,
         delay: float = 0.0,
+        proxy: str | None = None,
     ) -> None:
         self.output_dir = output_dir
         self.workers = max(1, workers)
         self.timeout = timeout
         self.delay = max(0.0, delay)
-        self.session = requests.Session()
-        retry = Retry(
-            total=4,
-            connect=4,
-            read=4,
-            backoff_factor=1.0,
-            status_forcelist=(429, 500, 502, 503, 504),
-            allowed_methods=frozenset({"GET", "HEAD"}),
-            respect_retry_after_header=True,
+        self.proxy = proxy
+        proxies = {"http": proxy, "https": proxy} if proxy else None
+        self.session = Session(
+            http_version=CurlHttpVersion.V3,
+            curl_options={CurlOpt.SSLVERSION: CurlSslVersion.TLSv1_3},
+            trust_env=not bool(proxy),
+            proxies=proxies,
         )
-        adapter = HTTPAdapter(max_retries=retry, pool_connections=self.workers + 2, pool_maxsize=self.workers + 2)
-        self.session.mount("http://", adapter)
-        self.session.mount("https://", adapter)
         self.session.headers.update({"User-Agent": USER_AGENT, "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"})
         self.progress_path: Path | None = None
         self.progress: dict = {}
         self.had_errors = False
+
+    def log_request_error(self, context: str, url: str, error: RequestException) -> None:
+        LOGGER.error("%s失败，已保留进度: %s: %s", context, url, error)
+        message = str(error).lower()
+        if isinstance(error, ProxyError) or "cannot connect to proxy" in message:
+            LOGGER.error(
+                "无法连接指定代理。请先启动代理软件，并将 --proxy 后的端口改成软件显示的 HTTP/Mixed Port；"
+                "仅填写 127.0.0.1:7890 不会创建代理服务。"
+            )
+            return
+        if "connection reset by peer" not in message and "connectionreseterror" not in message:
+            return
+        if self.proxy:
+            LOGGER.error("连接经过代理后仍被重置，请确认代理可访问该站点并支持 HTTPS CONNECT。")
+        else:
+            LOGGER.error(
+                "HTTP/3 连接仍在收到响应前被重置。若浏览器可以访问，请检查浏览器是否使用了代理扩展；"
+                "也可以启用相同代理后使用 --proxy http://127.0.0.1:端口 重试。"
+            )
 
     def save_progress(self) -> None:
         if self.progress_path is None:
@@ -438,45 +560,102 @@ class ComicCrawler:
             LOGGER.info("发现上次下载进度，将从 %s 继续", current_page)
         return deduplicated
 
-    def fetch(self, url: str, referer: str | None = None) -> str:
+    def request(self, url: str, referer: str | None = None, stream: bool = False):
         headers = {"Referer": referer} if referer else {}
-        if self.delay:
-            time.sleep(self.delay)
-        response = self.session.get(url, headers=headers, timeout=self.timeout)
-        response.raise_for_status()
-        response.encoding = response.apparent_encoding or response.encoding
-        return response.text
+        for attempt in range(MAX_REQUEST_RETRIES + 1):
+            if self.delay:
+                time.sleep(self.delay)
+            try:
+                response = self.session.get(url, headers=headers, timeout=self.timeout, stream=stream)
+            except RequestException as error:
+                if isinstance(error, ProxyError) or attempt >= MAX_REQUEST_RETRIES:
+                    raise
+                wait_seconds = 2 ** attempt
+                LOGGER.warning(
+                    "请求连接失败，%s 秒后重试（%s/%s）: %s",
+                    wait_seconds,
+                    attempt + 1,
+                    MAX_REQUEST_RETRIES,
+                    error,
+                )
+                time.sleep(wait_seconds)
+                continue
+
+            if response.status_code in RETRYABLE_STATUS_CODES and attempt < MAX_REQUEST_RETRIES:
+                retry_after = response.headers.get("Retry-After", "")
+                wait_seconds = int(retry_after) if str(retry_after).isdigit() else 2 ** attempt
+                response.close()
+                LOGGER.warning(
+                    "网站返回 HTTP %s，%s 秒后重试（%s/%s）",
+                    response.status_code,
+                    wait_seconds,
+                    attempt + 1,
+                    MAX_REQUEST_RETRIES,
+                )
+                time.sleep(wait_seconds)
+                continue
+
+            response.raise_for_status()
+            return response
+        raise RuntimeError("请求重试逻辑异常结束")
+
+    def fetch(self, url: str, referer: str | None = None) -> str:
+        response = self.request(url, referer=referer)
+        try:
+            response.encoding = response.charset_encoding or response.encoding or "utf-8"
+            return response.text
+        finally:
+            response.close()
 
     def download(self, start_url: str, max_pages: int | None = None, max_books: int | None = None) -> None:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         base_dir = self.output_dir / safe_name(SITE_NAME)
         base_dir.mkdir(parents=True, exist_ok=True)
         pending = self.initialize_progress(start_url, base_dir)
+        deferred: list[tuple[int, str]] = []
         seen_pages: set[str] = set()
         seen_books: set[str] = set()
         pages_processed = 0
         books_processed = 0
 
+        def pending_pages() -> list[tuple[int, str]]:
+            result: list[tuple[int, str]] = []
+            seen: set[str] = set()
+            for item in [*pending, *deferred]:
+                if item[1] not in seen:
+                    seen.add(item[1])
+                    result.append(item)
+            return result
+
+        def save_pending_pages() -> None:
+            self.progress["pending_pages"] = self.pending_snapshot(pending_pages())
+
+        def defer_page(number: int, url: str) -> None:
+            if url not in {item_url for _, item_url in deferred}:
+                deferred.append((number, url))
+
         while pending:
+            if max_pages is not None and pages_processed >= max_pages:
+                break
             pending.sort(key=lambda item: (item[0], item[1]))
             page_number, page_url = pending.pop(0)
-            if page_url in seen_pages or (max_pages is not None and pages_processed >= max_pages):
+            if page_url in seen_pages:
                 continue
             seen_pages.add(page_url)
             page_state = self.progress.setdefault("pages", {}).setdefault(page_url, {})
             page_state.update({"number": page_number, "status": "in_progress", "started_at": utc_timestamp()})
             self.progress["current"] = {"page_number": page_number, "page_url": page_url, "status": "in_progress"}
-            self.progress["pending_pages"] = self.pending_snapshot(pending)
+            save_pending_pages()
             self.save_progress()
             LOGGER.info("扫描第 %s 页: %s", page_number, page_url)
             try:
                 page_html = self.fetch(page_url)
-            except requests.RequestException as error:
-                LOGGER.error("列表页请求失败，跳过 %s: %s", page_url, error)
+            except RequestException as error:
+                self.log_request_error("列表页请求", page_url, error)
                 self.had_errors = True
                 page_state.update({"status": "error", "error": str(error), "updated_at": utc_timestamp()})
-                pending.insert(0, (page_number, page_url))
-                self.progress["pending_pages"] = self.pending_snapshot(pending)
+                defer_page(page_number, page_url)
+                save_pending_pages()
                 self.progress["current"] = None
                 self.save_progress()
                 continue
@@ -484,11 +663,11 @@ class ComicCrawler:
             soup = BeautifulSoup(page_html, "html.parser")
             page_links = discover_page_links(soup, page_url)
             for discovered_number, discovered_url in page_links:
-                if discovered_url in seen_pages:
+                if discovered_url in seen_pages or discovered_url in {url for _, url in pending_pages()}:
                     continue
                 number = discovered_number or (max((n for n, _ in pending), default=page_number) + 1)
                 pending.append((number, discovered_url))
-            self.progress["pending_pages"] = self.pending_snapshot(pending)
+            save_pending_pages()
             self.save_progress()
 
             page_dir = base_dir / safe_name(f"第{page_number}页")
@@ -512,9 +691,11 @@ class ComicCrawler:
                 try:
                     completed = self.download_book(book_url, page_dir)
                     book_state.update({"status": "completed" if completed else "no_chapters", "updated_at": utc_timestamp()})
+                    if completed:
+                        book_state.pop("error", None)
                     page_had_errors = page_had_errors or not completed
-                except requests.RequestException as error:
-                    LOGGER.error("漫画请求失败，跳过 %s: %s", book_url, error)
+                except RequestException as error:
+                    self.log_request_error("漫画请求", book_url, error)
                     self.had_errors = True
                     book_state.update({"status": "error", "error": str(error), "updated_at": utc_timestamp()})
                     page_had_errors = True
@@ -526,8 +707,8 @@ class ComicCrawler:
                 self.save_progress()
             limit_reached = max_books is not None and books_processed >= max_books
             page_needs_retry = page_had_errors or limit_reached
-            if page_needs_retry and page_url not in {url for _, url in pending}:
-                pending.append((page_number, page_url))
+            if page_needs_retry:
+                defer_page(page_number, page_url)
             page_state.update(
                 {
                     "status": "limited" if limit_reached else ("incomplete" if page_had_errors else "completed"),
@@ -535,12 +716,28 @@ class ComicCrawler:
                     "updated_at": utc_timestamp(),
                 }
             )
+            if not page_needs_retry:
+                page_state.pop("error", None)
             self.progress["current"] = None
-            self.progress["pending_pages"] = self.pending_snapshot(pending)
+            save_pending_pages()
             self.save_progress()
             pages_processed += 1
+            if limit_reached:
+                break
 
-        LOGGER.info("完成：扫描 %s 页，处理 %s 部漫画", pages_processed, books_processed)
+        save_pending_pages()
+        self.progress["current"] = None
+        self.save_progress()
+        remaining_pages = len(self.progress.get("pending_pages", []))
+        if self.had_errors or remaining_pages:
+            LOGGER.warning(
+                "本次未完成：成功扫描 %s 页，处理 %s 部漫画，仍有 %s 个列表页待处理；再次运行会从断点继续",
+                pages_processed,
+                books_processed,
+                remaining_pages,
+            )
+        else:
+            LOGGER.info("完成：扫描 %s 页，处理 %s 部漫画", pages_processed, books_processed)
 
     def download_book(self, book_url: str, page_dir: Path) -> bool:
         LOGGER.info("读取漫画: %s", book_url)
@@ -559,11 +756,18 @@ class ComicCrawler:
         book_dir = page_dir / safe_name(title)
         book_dir.mkdir(parents=True, exist_ok=True)
         LOGGER.info("漫画《%s》发现 %s 话", title, len(chapters))
+        quarantine_foreign_chapter_directories(book_dir, book_url)
         chapter_states = book_state.setdefault("chapters", {})
+        valid_chapter_urls = {chapter_url for chapter_url, _ in chapters}
+        for stale_url in list(chapter_states):
+            if stale_url not in valid_chapter_urls:
+                del chapter_states[stale_url]
         all_chapters_completed = True
         for index, (chapter_url, chapter_title) in enumerate(chapters, start=1):
-            number = chapter_number(chapter_title) or index
-            chapter_dir = book_dir / safe_name(f"第{number}话")
+            url_index = chapter_url_index(chapter_url, book_url)
+            number = chapter_number(chapter_title) or ((url_index + 1) if url_index is not None else index)
+            desired_dir = book_dir / safe_name(chapter_title, f"第{number}話")
+            chapter_dir = existing_chapter_directory(book_dir, chapter_url, desired_dir)
             chapter_state = chapter_states.setdefault(chapter_url, {})
             chapter_state.update({"number": number, "title": chapter_title, "status": "in_progress"})
             self.progress["current"] = {
@@ -580,6 +784,8 @@ class ComicCrawler:
                 chapter_state.update(
                     {"status": "completed" if chapter_completed else "no_images", "updated_at": utc_timestamp()}
                 )
+                if chapter_completed:
+                    chapter_state.pop("error", None)
                 all_chapters_completed = all_chapters_completed and chapter_completed
             except Exception as error:
                 chapter_state.update({"status": "error", "error": str(error), "updated_at": utc_timestamp()})
@@ -678,10 +884,9 @@ class ComicCrawler:
                 return
 
         temporary = target.with_name(f".{target.name}.part")
-        headers = {"Referer": task.referer}
+        response = None
         try:
-            response = self.session.get(task.url, headers=headers, timeout=self.timeout, stream=True)
-            response.raise_for_status()
+            response = self.request(task.url, referer=task.referer, stream=True)
             with temporary.open("wb") as stream:
                 for chunk in response.iter_content(chunk_size=128 * 1024):
                     if chunk:
@@ -696,6 +901,9 @@ class ComicCrawler:
             except OSError:
                 pass
             raise
+        finally:
+            if response is not None:
+                response.close()
 
 
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
@@ -705,6 +913,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser.add_argument("--workers", type=int, default=4, help="同时下载图片的数量，默认 4")
     parser.add_argument("--timeout", type=float, default=30, help="单次请求超时秒数，默认 30")
     parser.add_argument("--delay", type=float, default=0, help="请求之间的间隔秒数，默认 0")
+    parser.add_argument("--proxy", help="HTTP/HTTPS 代理，例如 http://127.0.0.1:7890")
     parser.add_argument("--max-pages", type=int, default=None, help="最多扫描多少个列表页，调试时使用")
     parser.add_argument("--max-books", type=int, default=None, help="最多下载多少部漫画，调试时使用")
     parser.add_argument("--verbose", action="store_true", help="输出更详细的下载日志")
@@ -724,13 +933,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             workers=args.workers,
             timeout=args.timeout,
             delay=args.delay,
+            proxy=args.proxy,
         )
         crawler.download(args.url, max_pages=args.max_pages, max_books=args.max_books)
         return 1 if crawler.had_errors else 0
     except KeyboardInterrupt:
         LOGGER.warning("用户中断。再次运行会校验并补齐已有章节。")
         return 130
-    except requests.RequestException as error:
+    except RequestException as error:
         LOGGER.error("请求失败: %s", error)
         return 1
     return 0

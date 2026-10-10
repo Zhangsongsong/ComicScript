@@ -1,0 +1,1566 @@
+{
+  "site": "rouman5",
+  "start_url": "https://rouman5.com/books?continued=false",
+  "created_at": "2026-10-10T02:09:18+00:00",
+  "updated_at": "2026-10-10T04:31:14+00:00",
+  "current": {
+    "page_number": 1,
+    "page_url": "https://rouman5.com/books?continued=false",
+    "book_url": "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83",
+    "status": "in_progress",
+    "title": "慾海交鋒",
+    "chapter_url": "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/102",
+    "chapter_title": "第103話 96",
+    "chapter_number": 103
+  },
+  "pending_pages": [
+    {
+      "number": 1,
+      "url": "https://rouman5.com/books?continued=false&page=1"
+    },
+    {
+      "number": 2,
+      "url": "https://rouman5.com/books?continued=false&page=2"
+    },
+    {
+      "number": 53,
+      "url": "https://rouman5.com/books?continued=false&page=53"
+    }
+  ],
+  "pages": {
+    "https://rouman5.com/books?continued=false": {
+      "number": 1,
+      "status": "in_progress",
+      "started_at": "2026-10-10T03:09:39+00:00",
+      "error": "HTTPSConnectionPool(host='rouman5.com', port=443): Max retries exceeded with url: /books?continued=false (Caused by ProxyError('Cannot connect to proxy.', NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1020e0d60>: Failed to establish a new connection: [Errno 61] Connection refused')))",
+      "updated_at": "2026-10-10T02:34:35+00:00"
+    }
+  },
+  "books": {
+    "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef": {
+      "page_number": 1,
+      "page_url": "https://rouman5.com/books?continued=false",
+      "status": "completed",
+      "title": "壞老師",
+      "chapters_total": 54,
+      "updated_at": "2026-10-10T03:41:04+00:00",
+      "chapters": {
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/1": {
+          "number": 2,
+          "title": "第2話-我需要男人的撫摸",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T03:10:08+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/2": {
+          "number": 3,
+          "title": "第3話-對陌生觸感起反應的身體",
+          "status": "completed",
+          "images_total": 38,
+          "images_completed": 38,
+          "updated_at": "2026-10-10T03:10:17+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/3": {
+          "number": 4,
+          "title": "第4話-另一個渴望正宇的女人",
+          "status": "completed",
+          "images_total": 38,
+          "images_completed": 38,
+          "updated_at": "2026-10-10T03:10:27+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/4": {
+          "number": 5,
+          "title": "第5話-在女兒面前被戲弄的有夫之婦",
+          "status": "completed",
+          "images_total": 40,
+          "images_completed": 40,
+          "updated_at": "2026-10-10T03:10:37+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/5": {
+          "number": 6,
+          "title": "第6話-我想...跟你做...",
+          "status": "completed",
+          "images_total": 37,
+          "images_completed": 37,
+          "updated_at": "2026-10-10T03:10:48+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/6": {
+          "number": 7,
+          "title": "第7話-正中下懷",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T03:10:58+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/0": {
+          "number": 1,
+          "title": "第1話-20歲的女學生",
+          "status": "completed",
+          "images_total": 58,
+          "images_completed": 58,
+          "updated_at": "2026-10-10T03:09:57+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/7": {
+          "number": 8,
+          "title": "第8話-開放的主婦",
+          "status": "completed",
+          "images_total": 36,
+          "images_completed": 36,
+          "updated_at": "2026-10-10T03:11:07+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/8": {
+          "number": 9,
+          "title": "第9話-貪圖色欲的代價",
+          "status": "completed",
+          "images_total": 33,
+          "images_completed": 33,
+          "updated_at": "2026-10-10T03:11:16+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/9": {
+          "number": 10,
+          "title": "第10話-綁架事蹟敗露",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T03:11:27+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/10": {
+          "number": 11,
+          "title": "第11話-我不會光說不練",
+          "status": "completed",
+          "images_total": 48,
+          "images_completed": 48,
+          "updated_at": "2026-10-10T03:11:39+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/11": {
+          "number": 12,
+          "title": "第12話-壞人出意外死了",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T03:11:51+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/12": {
+          "number": 13,
+          "title": "第13話-濃郁的體味",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T03:12:02+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/13": {
+          "number": 14,
+          "title": "第14話-雙腿間傳來的甜蜜滋味",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T03:12:22+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/14": {
+          "number": 15,
+          "title": "第15話-共度一夜良宵",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T03:12:35+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/15": {
+          "number": 16,
+          "title": "第16話-我來保護你們",
+          "status": "completed",
+          "images_total": 53,
+          "images_completed": 53,
+          "updated_at": "2026-10-10T03:12:47+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/16": {
+          "number": 17,
+          "title": "第17話-你這裡好美",
+          "status": "completed",
+          "images_total": 60,
+          "images_completed": 60,
+          "updated_at": "2026-10-10T03:13:03+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/17": {
+          "number": 18,
+          "title": "第18話-一起洗澡的樂趣",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T03:13:18+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/18": {
+          "number": 19,
+          "title": "第19話-要求電愛的雅萱",
+          "status": "completed",
+          "images_total": 53,
+          "images_completed": 53,
+          "updated_at": "2026-10-10T03:13:56+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/19": {
+          "number": 20,
+          "title": "第20話-被懷疑的正宇",
+          "status": "completed",
+          "images_total": 57,
+          "images_completed": 57,
+          "updated_at": "2026-10-10T03:14:27+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/20": {
+          "number": 21,
+          "title": "第21話-意料之外的變數",
+          "status": "completed",
+          "images_total": 57,
+          "images_completed": 57,
+          "updated_at": "2026-10-10T03:14:56+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/21": {
+          "number": 22,
+          "title": "第22話-內心的波動",
+          "status": "completed",
+          "images_total": 52,
+          "images_completed": 52,
+          "updated_at": "2026-10-10T03:15:26+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/22": {
+          "number": 23,
+          "title": "第23話-受到大學生刺激的雅萱",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T03:15:48+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/23": {
+          "number": 24,
+          "title": "第24話-進入助教的回憶",
+          "status": "completed",
+          "images_total": 47,
+          "images_completed": 47,
+          "updated_at": "2026-10-10T03:16:04+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/24": {
+          "number": 25,
+          "title": "第25話-威力無窮的塞子",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T03:16:18+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/25": {
+          "number": 26,
+          "title": "第26話-認識自我的過程",
+          "status": "completed",
+          "images_total": 52,
+          "images_completed": 52,
+          "updated_at": "2026-10-10T03:16:43+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/26": {
+          "number": 27,
+          "title": "第27話-你老公在對面",
+          "status": "completed",
+          "images_total": 60,
+          "images_completed": 60,
+          "updated_at": "2026-10-10T03:17:04+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/27": {
+          "number": 28,
+          "title": "第28話-不懷好意的目光",
+          "status": "completed",
+          "images_total": 52,
+          "images_completed": 52,
+          "updated_at": "2026-10-10T03:17:20+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/28": {
+          "number": 29,
+          "title": "第29話-對性產生好奇",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T03:17:43+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/29": {
+          "number": 30,
+          "title": "第30話-嫉妒女兒的媽媽",
+          "status": "completed",
+          "images_total": 54,
+          "images_completed": 54,
+          "updated_at": "2026-10-10T03:17:56+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/30": {
+          "number": 31,
+          "title": "第31話",
+          "status": "completed",
+          "images_total": 224,
+          "images_completed": 224,
+          "updated_at": "2026-10-10T03:18:44+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/31": {
+          "number": 32,
+          "title": "第32話",
+          "status": "completed",
+          "images_total": 230,
+          "images_completed": 230,
+          "updated_at": "2026-10-10T03:19:43+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/32": {
+          "number": 33,
+          "title": "第33話",
+          "status": "completed",
+          "images_total": 218,
+          "images_completed": 218,
+          "updated_at": "2026-10-10T03:20:25+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/33": {
+          "number": 34,
+          "title": "第34話",
+          "status": "completed",
+          "images_total": 204,
+          "images_completed": 204,
+          "updated_at": "2026-10-10T03:21:08+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/34": {
+          "number": 35,
+          "title": "第35話",
+          "status": "completed",
+          "images_total": 196,
+          "images_completed": 196,
+          "updated_at": "2026-10-10T03:21:45+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/35": {
+          "number": 36,
+          "title": "第36話",
+          "status": "completed",
+          "images_total": 200,
+          "images_completed": 200,
+          "updated_at": "2026-10-10T03:22:23+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/36": {
+          "number": 37,
+          "title": "第37話",
+          "status": "completed",
+          "images_total": 212,
+          "images_completed": 212,
+          "updated_at": "2026-10-10T03:23:10+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/37": {
+          "number": 38,
+          "title": "第38話",
+          "status": "completed",
+          "images_total": 225,
+          "images_completed": 225,
+          "updated_at": "2026-10-10T03:23:53+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/38": {
+          "number": 39,
+          "title": "第39話",
+          "status": "completed",
+          "images_total": 229,
+          "images_completed": 229,
+          "updated_at": "2026-10-10T03:24:37+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/39": {
+          "number": 40,
+          "title": "第40話",
+          "status": "completed",
+          "images_total": 237,
+          "images_completed": 237,
+          "updated_at": "2026-10-10T03:25:23+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/40": {
+          "number": 41,
+          "title": "第41話",
+          "status": "completed",
+          "images_total": 209,
+          "images_completed": 209,
+          "updated_at": "2026-10-10T03:26:03+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/41": {
+          "number": 42,
+          "title": "第42話",
+          "status": "completed",
+          "images_total": 219,
+          "images_completed": 219,
+          "updated_at": "2026-10-10T03:26:45+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/42": {
+          "number": 43,
+          "title": "第43話",
+          "status": "completed",
+          "images_total": 205,
+          "images_completed": 205,
+          "updated_at": "2026-10-10T03:27:27+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/43": {
+          "number": 44,
+          "title": "第44話",
+          "status": "completed",
+          "images_total": 237,
+          "images_completed": 237,
+          "updated_at": "2026-10-10T03:29:06+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/44": {
+          "number": 45,
+          "title": "第45話",
+          "status": "completed",
+          "images_total": 219,
+          "images_completed": 219,
+          "updated_at": "2026-10-10T03:30:32+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/45": {
+          "number": 46,
+          "title": "第46話",
+          "status": "completed",
+          "images_total": 208,
+          "images_completed": 208,
+          "updated_at": "2026-10-10T03:31:52+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/46": {
+          "number": 47,
+          "title": "第47話",
+          "status": "completed",
+          "images_total": 211,
+          "images_completed": 211,
+          "updated_at": "2026-10-10T03:33:16+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/47": {
+          "number": 48,
+          "title": "第48話",
+          "status": "completed",
+          "images_total": 204,
+          "images_completed": 204,
+          "updated_at": "2026-10-10T03:34:40+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/48": {
+          "number": 49,
+          "title": "第49話",
+          "status": "completed",
+          "images_total": 195,
+          "images_completed": 195,
+          "updated_at": "2026-10-10T03:35:55+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/49": {
+          "number": 50,
+          "title": "第50話",
+          "status": "completed",
+          "images_total": 201,
+          "images_completed": 201,
+          "updated_at": "2026-10-10T03:36:33+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/50": {
+          "number": 51,
+          "title": "第51話",
+          "status": "completed",
+          "images_total": 210,
+          "images_completed": 210,
+          "updated_at": "2026-10-10T03:37:40+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/51": {
+          "number": 52,
+          "title": "第52話",
+          "status": "completed",
+          "images_total": 216,
+          "images_completed": 216,
+          "updated_at": "2026-10-10T03:39:08+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/52": {
+          "number": 53,
+          "title": "第53話",
+          "status": "completed",
+          "images_total": 189,
+          "images_completed": 189,
+          "updated_at": "2026-10-10T03:40:22+00:00"
+        },
+        "https://rouman5.com/books/41da3175-38ab-4cf4-8f64-ea7ed468baef/53": {
+          "number": 54,
+          "title": "最終話",
+          "status": "completed",
+          "images_total": 168,
+          "images_completed": 168,
+          "updated_at": "2026-10-10T03:41:04+00:00"
+        }
+      }
+    },
+    "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e": {
+      "page_number": 1,
+      "page_url": "https://rouman5.com/books?continued=false",
+      "status": "completed",
+      "title": "瘋狂女教師",
+      "chapters_total": 30,
+      "updated_at": "2026-10-10T04:01:33+00:00",
+      "chapters": {
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/1": {
+          "number": 2,
+          "title": "第2話",
+          "status": "completed",
+          "images_total": 47,
+          "images_completed": 47,
+          "updated_at": "2026-10-10T03:41:27+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/2": {
+          "number": 3,
+          "title": "第3話",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T03:41:39+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/3": {
+          "number": 4,
+          "title": "第4話",
+          "status": "completed",
+          "images_total": 65,
+          "images_completed": 65,
+          "updated_at": "2026-10-10T03:41:54+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/0": {
+          "number": 1,
+          "title": "第1話",
+          "status": "completed",
+          "images_total": 31,
+          "images_completed": 31,
+          "updated_at": "2026-10-10T03:41:15+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/4": {
+          "number": 5,
+          "title": "第5話",
+          "status": "completed",
+          "images_total": 48,
+          "images_completed": 48,
+          "updated_at": "2026-10-10T03:42:06+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/5": {
+          "number": 6,
+          "title": "第6話",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T03:42:18+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/6": {
+          "number": 7,
+          "title": "第7話",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T03:42:36+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/7": {
+          "number": 8,
+          "title": "第8話",
+          "status": "completed",
+          "images_total": 44,
+          "images_completed": 44,
+          "updated_at": "2026-10-10T03:42:48+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/8": {
+          "number": 9,
+          "title": "第9話",
+          "status": "completed",
+          "images_total": 112,
+          "images_completed": 112,
+          "updated_at": "2026-10-10T03:43:19+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/9": {
+          "number": 10,
+          "title": "第10話",
+          "status": "completed",
+          "images_total": 124,
+          "images_completed": 124,
+          "updated_at": "2026-10-10T03:44:11+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/10": {
+          "number": 11,
+          "title": "第11話",
+          "status": "completed",
+          "images_total": 119,
+          "images_completed": 119,
+          "updated_at": "2026-10-10T03:45:02+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/11": {
+          "number": 12,
+          "title": "第12話",
+          "status": "completed",
+          "images_total": 129,
+          "images_completed": 129,
+          "updated_at": "2026-10-10T03:45:57+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/12": {
+          "number": 13,
+          "title": "第13話",
+          "status": "completed",
+          "images_total": 118,
+          "images_completed": 118,
+          "updated_at": "2026-10-10T03:46:46+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/13": {
+          "number": 14,
+          "title": "第14話",
+          "status": "completed",
+          "images_total": 120,
+          "images_completed": 120,
+          "updated_at": "2026-10-10T03:47:36+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/14": {
+          "number": 15,
+          "title": "第15話",
+          "status": "completed",
+          "images_total": 121,
+          "images_completed": 121,
+          "updated_at": "2026-10-10T03:48:28+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/15": {
+          "number": 16,
+          "title": "第16話",
+          "status": "completed",
+          "images_total": 121,
+          "images_completed": 121,
+          "updated_at": "2026-10-10T03:49:24+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/16": {
+          "number": 17,
+          "title": "第17話",
+          "status": "completed",
+          "images_total": 107,
+          "images_completed": 107,
+          "updated_at": "2026-10-10T03:50:17+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/17": {
+          "number": 18,
+          "title": "第18話",
+          "status": "completed",
+          "images_total": 113,
+          "images_completed": 113,
+          "updated_at": "2026-10-10T03:51:12+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/18": {
+          "number": 19,
+          "title": "第19話",
+          "status": "completed",
+          "images_total": 121,
+          "images_completed": 121,
+          "updated_at": "2026-10-10T03:52:04+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/19": {
+          "number": 20,
+          "title": "第20話",
+          "status": "completed",
+          "images_total": 105,
+          "images_completed": 105,
+          "updated_at": "2026-10-10T03:52:50+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/20": {
+          "number": 21,
+          "title": "第21話",
+          "status": "completed",
+          "images_total": 117,
+          "images_completed": 117,
+          "updated_at": "2026-10-10T03:53:54+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/21": {
+          "number": 22,
+          "title": "第22話",
+          "status": "completed",
+          "images_total": 118,
+          "images_completed": 118,
+          "updated_at": "2026-10-10T03:55:06+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/22": {
+          "number": 23,
+          "title": "第23話",
+          "status": "completed",
+          "images_total": 104,
+          "images_completed": 104,
+          "updated_at": "2026-10-10T03:56:03+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/23": {
+          "number": 24,
+          "title": "第24話",
+          "status": "completed",
+          "images_total": 116,
+          "images_completed": 116,
+          "updated_at": "2026-10-10T03:56:51+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/24": {
+          "number": 25,
+          "title": "第25話",
+          "status": "completed",
+          "images_total": 116,
+          "images_completed": 116,
+          "updated_at": "2026-10-10T03:57:40+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/25": {
+          "number": 26,
+          "title": "第26話",
+          "status": "completed",
+          "images_total": 115,
+          "images_completed": 115,
+          "updated_at": "2026-10-10T03:58:29+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/26": {
+          "number": 27,
+          "title": "第27話",
+          "status": "completed",
+          "images_total": 107,
+          "images_completed": 107,
+          "updated_at": "2026-10-10T03:59:14+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/27": {
+          "number": 28,
+          "title": "第28話",
+          "status": "completed",
+          "images_total": 110,
+          "images_completed": 110,
+          "updated_at": "2026-10-10T04:00:00+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/28": {
+          "number": 29,
+          "title": "第29話",
+          "status": "completed",
+          "images_total": 103,
+          "images_completed": 103,
+          "updated_at": "2026-10-10T04:00:43+00:00"
+        },
+        "https://rouman5.com/books/4be88315-3139-4c0a-930b-1e8e3e821c2e/29": {
+          "number": 30,
+          "title": "第30話",
+          "status": "completed",
+          "images_total": 116,
+          "images_completed": 116,
+          "updated_at": "2026-10-10T04:01:33+00:00"
+        }
+      }
+    },
+    "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83": {
+      "page_number": 1,
+      "page_url": "https://rouman5.com/books?continued=false",
+      "status": "in_progress",
+      "title": "慾海交鋒",
+      "chapters_total": 111,
+      "updated_at": "2026-10-10T04:01:35+00:00",
+      "chapters": {
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/0": {
+          "number": 1,
+          "title": "第1话 第1話-征服這城市的女人吧",
+          "status": "completed",
+          "images_total": 76,
+          "images_completed": 76,
+          "updated_at": "2026-10-10T04:02:00+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/1": {
+          "number": 2,
+          "title": "第2话 第2話-第1位顧客:欲求不滿的人妻",
+          "status": "completed",
+          "images_total": 38,
+          "images_completed": 38,
+          "updated_at": "2026-10-10T04:02:15+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/2": {
+          "number": 3,
+          "title": "第3话 3",
+          "status": "completed",
+          "images_total": 65,
+          "images_completed": 65,
+          "updated_at": "2026-10-10T04:02:54+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/3": {
+          "number": 4,
+          "title": "第4话 第4話-當我的一日腦公♡",
+          "status": "completed",
+          "images_total": 39,
+          "images_completed": 39,
+          "updated_at": "2026-10-10T04:03:08+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/4": {
+          "number": 5,
+          "title": "第5话 第5話-奶汁大噴發的乳交",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T04:03:25+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/5": {
+          "number": 6,
+          "title": "第6话 第6話-尋找性奴的危險顧客",
+          "status": "completed",
+          "images_total": 57,
+          "images_completed": 57,
+          "updated_at": "2026-10-10T04:03:45+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/6": {
+          "number": 7,
+          "title": "第7话 第7話-沉迷肉體遊戲",
+          "status": "completed",
+          "images_total": 60,
+          "images_completed": 60,
+          "updated_at": "2026-10-10T04:04:07+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/7": {
+          "number": 8,
+          "title": "第8话 慾海交锋第8话 现出原形的VIP慾女",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T04:04:26+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/8": {
+          "number": 9,
+          "title": "第9话 第9話-等我爽完就把你殺了",
+          "status": "completed",
+          "images_total": 51,
+          "images_completed": 51,
+          "updated_at": "2026-10-10T04:04:48+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/9": {
+          "number": 10,
+          "title": "第10话 第10話-教大小姐重新做人",
+          "status": "completed",
+          "images_total": 37,
+          "images_completed": 37,
+          "updated_at": "2026-10-10T04:05:02+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/10": {
+          "number": 11,
+          "title": "第11话 11",
+          "status": "completed",
+          "images_total": 52,
+          "images_completed": 52,
+          "updated_at": "2026-10-10T04:05:22+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/11": {
+          "number": 12,
+          "title": "第12话 12",
+          "status": "completed",
+          "images_total": 47,
+          "images_completed": 47,
+          "updated_at": "2026-10-10T04:05:42+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/12": {
+          "number": 13,
+          "title": "第13话 13",
+          "status": "completed",
+          "images_total": 54,
+          "images_completed": 54,
+          "updated_at": "2026-10-10T04:05:59+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/13": {
+          "number": 14,
+          "title": "第14话 14",
+          "status": "completed",
+          "images_total": 47,
+          "images_completed": 47,
+          "updated_at": "2026-10-10T04:06:15+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/14": {
+          "number": 15,
+          "title": "第15话 15",
+          "status": "completed",
+          "images_total": 36,
+          "images_completed": 36,
+          "updated_at": "2026-10-10T04:06:28+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/15": {
+          "number": 16,
+          "title": "第16话 16",
+          "status": "completed",
+          "images_total": 40,
+          "images_completed": 40,
+          "updated_at": "2026-10-10T04:06:43+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/16": {
+          "number": 17,
+          "title": "第17话 17",
+          "status": "completed",
+          "images_total": 84,
+          "images_completed": 84,
+          "updated_at": "2026-10-10T04:07:07+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/17": {
+          "number": 18,
+          "title": "第18话 18",
+          "status": "completed",
+          "images_total": 119,
+          "images_completed": 119,
+          "updated_at": "2026-10-10T04:07:38+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/18": {
+          "number": 19,
+          "title": "第19话 19",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:07:54+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/19": {
+          "number": 20,
+          "title": "第20话 20",
+          "status": "completed",
+          "images_total": 39,
+          "images_completed": 39,
+          "updated_at": "2026-10-10T04:08:13+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/20": {
+          "number": 21,
+          "title": "第21话 21",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T04:08:29+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/21": {
+          "number": 22,
+          "title": "第22话 22",
+          "status": "completed",
+          "images_total": 36,
+          "images_completed": 36,
+          "updated_at": "2026-10-10T04:08:41+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/22": {
+          "number": 23,
+          "title": "第23话 23",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:08:55+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/23": {
+          "number": 24,
+          "title": "第24话 24",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:09:11+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/24": {
+          "number": 25,
+          "title": "第25话 25",
+          "status": "completed",
+          "images_total": 37,
+          "images_completed": 37,
+          "updated_at": "2026-10-10T04:09:26+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/25": {
+          "number": 26,
+          "title": "第26话 26",
+          "status": "completed",
+          "images_total": 35,
+          "images_completed": 35,
+          "updated_at": "2026-10-10T04:09:40+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/26": {
+          "number": 27,
+          "title": "第27话 27",
+          "status": "completed",
+          "images_total": 42,
+          "images_completed": 42,
+          "updated_at": "2026-10-10T04:09:58+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/27": {
+          "number": 28,
+          "title": "第28话 28",
+          "status": "completed",
+          "images_total": 36,
+          "images_completed": 36,
+          "updated_at": "2026-10-10T04:10:12+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/28": {
+          "number": 29,
+          "title": "第29话 29",
+          "status": "completed",
+          "images_total": 39,
+          "images_completed": 39,
+          "updated_at": "2026-10-10T04:10:26+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/29": {
+          "number": 30,
+          "title": "第30话 30",
+          "status": "completed",
+          "images_total": 44,
+          "images_completed": 44,
+          "updated_at": "2026-10-10T04:10:40+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/30": {
+          "number": 31,
+          "title": "第31话 31",
+          "status": "completed",
+          "images_total": 48,
+          "images_completed": 48,
+          "updated_at": "2026-10-10T04:10:57+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/31": {
+          "number": 32,
+          "title": "第32话 休刊公告",
+          "status": "completed",
+          "images_total": 3,
+          "images_completed": 3,
+          "updated_at": "2026-10-10T04:11:00+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/32": {
+          "number": 33,
+          "title": "第33话 32",
+          "status": "completed",
+          "images_total": 42,
+          "images_completed": 42,
+          "updated_at": "2026-10-10T04:11:16+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/33": {
+          "number": 34,
+          "title": "第34话 33",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:11:33+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/34": {
+          "number": 35,
+          "title": "第35话 34",
+          "status": "completed",
+          "images_total": 35,
+          "images_completed": 35,
+          "updated_at": "2026-10-10T04:11:49+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/35": {
+          "number": 36,
+          "title": "第36话 35",
+          "status": "completed",
+          "images_total": 39,
+          "images_completed": 39,
+          "updated_at": "2026-10-10T04:12:05+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/36": {
+          "number": 37,
+          "title": "第37话 36",
+          "status": "completed",
+          "images_total": 35,
+          "images_completed": 35,
+          "updated_at": "2026-10-10T04:12:18+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/37": {
+          "number": 38,
+          "title": "第38话 37",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:12:33+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/38": {
+          "number": 39,
+          "title": "第39话 38",
+          "status": "completed",
+          "images_total": 38,
+          "images_completed": 38,
+          "updated_at": "2026-10-10T04:12:50+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/39": {
+          "number": 40,
+          "title": "第40话 39",
+          "status": "completed",
+          "images_total": 46,
+          "images_completed": 46,
+          "updated_at": "2026-10-10T04:13:07+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/40": {
+          "number": 41,
+          "title": "第41话 40",
+          "status": "completed",
+          "images_total": 36,
+          "images_completed": 36,
+          "updated_at": "2026-10-10T04:13:21+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/41": {
+          "number": 42,
+          "title": "第42话 休刊公告",
+          "status": "completed",
+          "images_total": 2,
+          "images_completed": 2,
+          "updated_at": "2026-10-10T04:13:23+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/42": {
+          "number": 43,
+          "title": "第43话 41",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:13:47+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/43": {
+          "number": 44,
+          "title": "第44话 42",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T04:14:11+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/44": {
+          "number": 45,
+          "title": "第45话 43",
+          "status": "completed",
+          "images_total": 35,
+          "images_completed": 35,
+          "updated_at": "2026-10-10T04:14:25+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/45": {
+          "number": 46,
+          "title": "第46话 44",
+          "status": "completed",
+          "images_total": 40,
+          "images_completed": 40,
+          "updated_at": "2026-10-10T04:14:40+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/46": {
+          "number": 47,
+          "title": "第47话 45",
+          "status": "completed",
+          "images_total": 54,
+          "images_completed": 54,
+          "updated_at": "2026-10-10T04:15:10+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/47": {
+          "number": 48,
+          "title": "第48话 46",
+          "status": "completed",
+          "images_total": 54,
+          "images_completed": 54,
+          "updated_at": "2026-10-10T04:15:30+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/48": {
+          "number": 49,
+          "title": "第49话 47",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T04:15:47+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/49": {
+          "number": 50,
+          "title": "第50话 休刊公告",
+          "status": "completed",
+          "images_total": 1,
+          "images_completed": 1,
+          "updated_at": "2026-10-10T04:15:49+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/50": {
+          "number": 51,
+          "title": "第51话 48",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T04:16:09+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/51": {
+          "number": 52,
+          "title": "第52话 49",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T04:16:24+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/52": {
+          "number": 53,
+          "title": "第53话 50",
+          "status": "completed",
+          "images_total": 162,
+          "images_completed": 162,
+          "updated_at": "2026-10-10T04:17:05+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/53": {
+          "number": 54,
+          "title": "第54话 51",
+          "status": "completed",
+          "images_total": 54,
+          "images_completed": 54,
+          "updated_at": "2026-10-10T04:17:25+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/54": {
+          "number": 55,
+          "title": "第55话 52",
+          "status": "completed",
+          "images_total": 47,
+          "images_completed": 47,
+          "updated_at": "2026-10-10T04:17:43+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/55": {
+          "number": 56,
+          "title": "第56话 53",
+          "status": "completed",
+          "images_total": 51,
+          "images_completed": 51,
+          "updated_at": "2026-10-10T04:18:04+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/56": {
+          "number": 57,
+          "title": "第57话 54",
+          "status": "completed",
+          "images_total": 47,
+          "images_completed": 47,
+          "updated_at": "2026-10-10T04:18:20+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/57": {
+          "number": 58,
+          "title": "第58话 55",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T04:18:37+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/58": {
+          "number": 59,
+          "title": "第59话 56",
+          "status": "completed",
+          "images_total": 51,
+          "images_completed": 51,
+          "updated_at": "2026-10-10T04:18:55+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/59": {
+          "number": 60,
+          "title": "第60话 57",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T04:19:10+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/60": {
+          "number": 61,
+          "title": "第61话 休刊",
+          "status": "completed",
+          "images_total": 1,
+          "images_completed": 1,
+          "updated_at": "2026-10-10T04:19:12+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/61": {
+          "number": 62,
+          "title": "第62话 58",
+          "status": "completed",
+          "images_total": 53,
+          "images_completed": 53,
+          "updated_at": "2026-10-10T04:19:35+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/62": {
+          "number": 63,
+          "title": "第63话 59",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T04:19:51+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/63": {
+          "number": 64,
+          "title": "第64话 60",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T04:20:10+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/64": {
+          "number": 65,
+          "title": "第65话 61",
+          "status": "completed",
+          "images_total": 48,
+          "images_completed": 48,
+          "updated_at": "2026-10-10T04:20:31+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/65": {
+          "number": 66,
+          "title": "第66话 62",
+          "status": "completed",
+          "images_total": 32,
+          "images_completed": 32,
+          "updated_at": "2026-10-10T04:20:49+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/66": {
+          "number": 67,
+          "title": "第67话 63",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T04:21:16+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/67": {
+          "number": 68,
+          "title": "第68话 64",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T04:21:37+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/68": {
+          "number": 69,
+          "title": "第69话 65",
+          "status": "completed",
+          "images_total": 31,
+          "images_completed": 31,
+          "updated_at": "2026-10-10T04:21:50+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/69": {
+          "number": 70,
+          "title": "第70话 66",
+          "status": "completed",
+          "images_total": 49,
+          "images_completed": 49,
+          "updated_at": "2026-10-10T04:22:07+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/70": {
+          "number": 71,
+          "title": "第71话 67",
+          "status": "completed",
+          "images_total": 41,
+          "images_completed": 41,
+          "updated_at": "2026-10-10T04:22:24+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/71": {
+          "number": 72,
+          "title": "第72话 68",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T04:22:43+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/72": {
+          "number": 73,
+          "title": "第73话 69",
+          "status": "completed",
+          "images_total": 43,
+          "images_completed": 43,
+          "updated_at": "2026-10-10T04:23:04+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/73": {
+          "number": 74,
+          "title": "第74话 70",
+          "status": "completed",
+          "images_total": 46,
+          "images_completed": 46,
+          "updated_at": "2026-10-10T04:23:19+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/74": {
+          "number": 75,
+          "title": "第75话 71",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T04:23:39+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/75": {
+          "number": 76,
+          "title": "第76话 72",
+          "status": "completed",
+          "images_total": 40,
+          "images_completed": 40,
+          "updated_at": "2026-10-10T04:23:56+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/76": {
+          "number": 77,
+          "title": "第77话 73",
+          "status": "completed",
+          "images_total": 53,
+          "images_completed": 53,
+          "updated_at": "2026-10-10T04:24:28+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/77": {
+          "number": 78,
+          "title": "第78话 休刊公告",
+          "status": "completed",
+          "images_total": 1,
+          "images_completed": 1,
+          "updated_at": "2026-10-10T04:24:30+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/78": {
+          "number": 79,
+          "title": "第79话 74",
+          "status": "completed",
+          "images_total": 62,
+          "images_completed": 62,
+          "updated_at": "2026-10-10T04:24:59+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/79": {
+          "number": 80,
+          "title": "第80话 75",
+          "status": "completed",
+          "images_total": 59,
+          "images_completed": 59,
+          "updated_at": "2026-10-10T04:25:20+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/80": {
+          "number": 81,
+          "title": "第81话 第一季後記",
+          "status": "completed",
+          "images_total": 7,
+          "images_completed": 7,
+          "updated_at": "2026-10-10T04:25:24+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/81": {
+          "number": 82,
+          "title": "第82话 76",
+          "status": "completed",
+          "images_total": 24,
+          "images_completed": 24,
+          "updated_at": "2026-10-10T04:25:36+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/82": {
+          "number": 83,
+          "title": "第83话 77",
+          "status": "completed",
+          "images_total": 25,
+          "images_completed": 25,
+          "updated_at": "2026-10-10T04:25:56+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/83": {
+          "number": 84,
+          "title": "第84话 78",
+          "status": "completed",
+          "images_total": 24,
+          "images_completed": 24,
+          "updated_at": "2026-10-10T04:26:08+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/84": {
+          "number": 85,
+          "title": "第85话 79",
+          "status": "completed",
+          "images_total": 23,
+          "images_completed": 23,
+          "updated_at": "2026-10-10T04:26:20+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/85": {
+          "number": 86,
+          "title": "第86话 80",
+          "status": "completed",
+          "images_total": 52,
+          "images_completed": 52,
+          "updated_at": "2026-10-10T04:26:37+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/86": {
+          "number": 87,
+          "title": "第87话 81",
+          "status": "completed",
+          "images_total": 58,
+          "images_completed": 58,
+          "updated_at": "2026-10-10T04:26:55+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/87": {
+          "number": 88,
+          "title": "第88话 82",
+          "status": "completed",
+          "images_total": 68,
+          "images_completed": 68,
+          "updated_at": "2026-10-10T04:27:17+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/88": {
+          "number": 89,
+          "title": "第89话 83",
+          "status": "completed",
+          "images_total": 48,
+          "images_completed": 48,
+          "updated_at": "2026-10-10T04:27:35+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/89": {
+          "number": 90,
+          "title": "第90话 84",
+          "status": "completed",
+          "images_total": 50,
+          "images_completed": 50,
+          "updated_at": "2026-10-10T04:27:49+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/90": {
+          "number": 91,
+          "title": "第91话 85",
+          "status": "completed",
+          "images_total": 45,
+          "images_completed": 45,
+          "updated_at": "2026-10-10T04:28:03+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/91": {
+          "number": 92,
+          "title": "第92话 86",
+          "status": "completed",
+          "images_total": 57,
+          "images_completed": 57,
+          "updated_at": "2026-10-10T04:28:21+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/92": {
+          "number": 93,
+          "title": "第93话 87",
+          "status": "completed",
+          "images_total": 56,
+          "images_completed": 56,
+          "updated_at": "2026-10-10T04:28:43+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/93": {
+          "number": 94,
+          "title": "第94话 88",
+          "status": "completed",
+          "images_total": 56,
+          "images_completed": 56,
+          "updated_at": "2026-10-10T04:29:02+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/94": {
+          "number": 95,
+          "title": "第95话 89",
+          "status": "completed",
+          "images_total": 74,
+          "images_completed": 74,
+          "updated_at": "2026-10-10T04:29:29+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/95": {
+          "number": 96,
+          "title": "第96話 90",
+          "status": "completed",
+          "images_total": 75,
+          "images_completed": 75,
+          "updated_at": "2026-10-10T04:29:51+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/96": {
+          "number": 97,
+          "title": "第97話 91",
+          "status": "completed",
+          "images_total": 59,
+          "images_completed": 59,
+          "updated_at": "2026-10-10T04:30:08+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/97": {
+          "number": 98,
+          "title": "第98話 休刊公告",
+          "status": "completed",
+          "images_total": 1,
+          "images_completed": 1,
+          "updated_at": "2026-10-10T04:30:10+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/98": {
+          "number": 99,
+          "title": "第99話 92",
+          "status": "completed",
+          "images_total": 31,
+          "images_completed": 31,
+          "updated_at": "2026-10-10T04:30:22+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/99": {
+          "number": 100,
+          "title": "第100話 93",
+          "status": "completed",
+          "images_total": 33,
+          "images_completed": 33,
+          "updated_at": "2026-10-10T04:30:38+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/100": {
+          "number": 101,
+          "title": "第101話 94",
+          "status": "completed",
+          "images_total": 34,
+          "images_completed": 34,
+          "updated_at": "2026-10-10T04:30:52+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/101": {
+          "number": 102,
+          "title": "第102話 95",
+          "status": "completed",
+          "images_total": 36,
+          "images_completed": 36,
+          "updated_at": "2026-10-10T04:31:05+00:00"
+        },
+        "https://rouman5.com/books/ae98e1de-70ee-4bec-8376-4187faa0bb83/102": {
+          "number": 103,
+          "title": "第103話 96",
+          "status": "downloading",
+          "images_total": 31,
+          "images_completed": 21
+        }
+      }
+    }
+  }
+}
