@@ -17,6 +17,7 @@ import mimetypes
 import re
 import sys
 import time
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -104,6 +105,17 @@ def query_page_number(url: str) -> int | None:
             return int(values[0])
     match = re.search(r"/(?:page[-_ ]?)?(\d+)/?$", parsed.path, re.I)
     return int(match.group(1)) if match else None
+
+
+def progress_page_number(url: str, start_url: str) -> int:
+    """Use the site's zero-based page query, with the unpaged start URL as page 0."""
+
+    number = query_page_number(url)
+    if number is not None:
+        return number
+    if canonical_url(start_url, url) == canonical_url(start_url, start_url):
+        return 0
+    return 0
 
 
 def extract_title(soup: BeautifulSoup, url: str, fallback: str = "未命名漫画") -> str:
@@ -202,7 +214,11 @@ def discover_page_links(soup: BeautifulSoup, page_url: str) -> list[tuple[int | 
         has_page_parameter = any(key in parse_qs(urlparse(href).query) for key in ("page", "p", "pageno", "page_no", "page_num"))
         is_numeric_link = bool(re.fullmatch(r"(?:第\s*)?\d+", text))
         is_pagination_context = bool(re.search(r"pagination|pager|page-item|pages|分页", context))
-        if (has_page_parameter or is_numeric_link or is_pagination_context) and not looks_like_chapter_url(href, text):
+        if (
+            number is not None
+            and (has_page_parameter or is_numeric_link or is_pagination_context)
+            and not looks_like_chapter_url(href, text)
+        ):
             seen.add(href)
             result.append((number, href))
     return result
@@ -519,6 +535,47 @@ class ComicCrawler:
     def pending_snapshot(pending: list[tuple[int, str]]) -> list[dict]:
         return [{"number": number, "url": url} for number, url in pending]
 
+    def migrate_zero_page_layout(self, start_url: str, base_dir: Path) -> None:
+        """Move legacy unpaged downloads from 第1页 to 第0页 using progress metadata."""
+
+        if self.progress.get("page_directory_layout") == "zero_based_query_parameter":
+            return
+
+        legacy_dir = base_dir / safe_name("第1页")
+        zero_dir = base_dir / safe_name("第0页")
+        moved = 0
+        for book_state in self.progress.get("books", {}).values():
+            if not isinstance(book_state, dict) or book_state.get("page_url") != start_url:
+                continue
+            book_state["page_number"] = 0
+            title = book_state.get("title")
+            if not isinstance(title, str) or not title:
+                continue
+            source = legacy_dir / safe_name(title)
+            target = zero_dir / safe_name(title)
+            if not source.exists():
+                continue
+            if target.exists():
+                LOGGER.warning("第0页已存在同名目录，保留原目录不迁移: %s", source)
+                continue
+            zero_dir.mkdir(parents=True, exist_ok=True)
+            source.rename(target)
+            moved += 1
+
+        page_state = self.progress.get("pages", {}).get(start_url)
+        if isinstance(page_state, dict):
+            page_state["number"] = 0
+        current = self.progress.get("current")
+        if isinstance(current, dict) and current.get("page_url"):
+            current["page_number"] = progress_page_number(current["page_url"], start_url)
+        for item in self.progress.get("pending_pages", []):
+            if isinstance(item, dict) and item.get("url"):
+                item["number"] = progress_page_number(item["url"], start_url)
+
+        self.progress["page_directory_layout"] = "zero_based_query_parameter"
+        if moved:
+            LOGGER.info("旧目录迁移完成：已将 %s 部漫画从第1页移动到第0页", moved)
+
     def initialize_progress(self, start_url: str, base_dir: Path) -> list[tuple[int, str]]:
         self.progress_path = base_dir / PROGRESS_NAME
         previous = load_manifest(self.progress_path)
@@ -536,16 +593,23 @@ class ComicCrawler:
                 "books": {},
             }
 
+        self.migrate_zero_page_layout(start_url, base_dir)
+
         pending: list[tuple[int, str]] = []
         current = self.progress.get("current")
         if isinstance(current, dict) and current.get("page_url"):
-            pending.append((int(current.get("page_number") or 1), current["page_url"]))
+            pending.append((progress_page_number(current["page_url"], start_url), current["page_url"]))
         for item in self.progress.get("pending_pages", []):
             if not isinstance(item, dict) or not item.get("url"):
                 continue
-            pending.append((int(item.get("number") or 1), item["url"]))
+            page_url = item["url"]
+            if page_url != (current or {}).get("page_url"):
+                page_state = self.progress.get("pages", {}).get(page_url, {})
+                if page_state.get("status") == "completed":
+                    continue
+            pending.append((progress_page_number(page_url, start_url), page_url))
         if not pending:
-            pending.append((1, start_url))
+            pending.append((0, start_url))
 
         deduplicated: list[tuple[int, str]] = []
         seen: set[str] = set()
@@ -612,6 +676,7 @@ class ComicCrawler:
         base_dir = self.output_dir / safe_name(SITE_NAME)
         base_dir.mkdir(parents=True, exist_ok=True)
         pending = self.initialize_progress(start_url, base_dir)
+        resume_page_url = (self.progress.get("current") or {}).get("page_url")
         deferred: list[tuple[int, str]] = []
         seen_pages: set[str] = set()
         seen_books: set[str] = set()
@@ -637,8 +702,17 @@ class ComicCrawler:
         while pending:
             if max_pages is not None and pages_processed >= max_pages:
                 break
-            pending.sort(key=lambda item: (item[0], item[1]))
-            page_number, page_url = pending.pop(0)
+            if resume_page_url:
+                resume_index = next((index for index, item in enumerate(pending) if item[1] == resume_page_url), None)
+                if resume_index is not None:
+                    page_number, page_url = pending.pop(resume_index)
+                else:
+                    pending.sort(key=lambda item: (item[0], item[1]))
+                    page_number, page_url = pending.pop(0)
+                resume_page_url = None
+            else:
+                pending.sort(key=lambda item: (item[0], item[1]))
+                page_number, page_url = pending.pop(0)
             if page_url in seen_pages:
                 continue
             seen_pages.add(page_url)
@@ -665,7 +739,10 @@ class ComicCrawler:
             for discovered_number, discovered_url in page_links:
                 if discovered_url in seen_pages or discovered_url in {url for _, url in pending_pages()}:
                     continue
-                number = discovered_number or (max((n for n, _ in pending), default=page_number) + 1)
+                discovered_state = self.progress.get("pages", {}).get(discovered_url, {})
+                if discovered_state.get("status") == "completed":
+                    continue
+                number = discovered_number if discovered_number is not None else progress_page_number(discovered_url, start_url)
                 pending.append((number, discovered_url))
             save_pending_pages()
             self.save_progress()
@@ -759,6 +836,7 @@ class ComicCrawler:
         quarantine_foreign_chapter_directories(book_dir, book_url)
         chapter_states = book_state.setdefault("chapters", {})
         valid_chapter_urls = {chapter_url for chapter_url, _ in chapters}
+        chapter_title_counts = Counter(chapter_title for _, chapter_title in chapters)
         for stale_url in list(chapter_states):
             if stale_url not in valid_chapter_urls:
                 del chapter_states[stale_url]
@@ -766,7 +844,11 @@ class ComicCrawler:
         for index, (chapter_url, chapter_title) in enumerate(chapters, start=1):
             url_index = chapter_url_index(chapter_url, book_url)
             number = chapter_number(chapter_title) or ((url_index + 1) if url_index is not None else index)
-            desired_dir = book_dir / safe_name(chapter_title, f"第{number}話")
+            directory_title = chapter_title
+            if chapter_title_counts[chapter_title] > 1:
+                unique_index = url_index if url_index is not None else index
+                directory_title = f"{chapter_title} [{unique_index}]"
+            desired_dir = book_dir / safe_name(directory_title, f"第{number}話")
             chapter_dir = existing_chapter_directory(book_dir, chapter_url, desired_dir)
             chapter_state = chapter_states.setdefault(chapter_url, {})
             chapter_state.update({"number": number, "title": chapter_title, "status": "in_progress"})

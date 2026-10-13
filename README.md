@@ -7,7 +7,7 @@
 ```text
 download/
 └── rouman5/
-    ├── 第1页/
+    ├── 第0页/                    # 无 page 参数的入口页
     │   └── 漫画名/
     │       └── 第1话/
     │           ├── 0001.jpg
@@ -65,6 +65,22 @@ python rounman/comic_scraper.py --proxy http://127.0.0.1:实际端口 --workers 
 程序可以重复执行。每话目录中的 `manifest.json` 保存了图片顺序和远端地址；再次运行时会逐张检查图片是否能被 Pillow 正常打开。完整图片会跳过，空文件、损坏图片、缺失图片和上次中断留下的临时文件会被重新下载。下载采用临时文件写入，只有校验成功后才替换正式文件。
 
 网站根目录下的 `download/rouman5/progress.json` 会实时记录当前列表页、漫画、章节、待处理分页以及已完成图片数。程序中断后再次执行相同命令，会从记录的页面继续；即使进程在单话中断，也会结合每话的 `manifest.json` 继续补齐缺失或损坏图片。
+
+## 逐项压缩
+
+漫画下载完成后，可以传入某一页的目录，将该目录下的每部漫画分别压缩。无 `page` 参数的入口页保存为 `第0页`，`page=1` 保存为 `第1页`。例如处理 `page=1`：
+
+```bash
+python rounman/zip_items.py "rounman/download/rouman5/第1页"
+```
+
+脚本会生成 `漫画名.zip`。每个 ZIP 写入并校验成功后，才会删除对应的漫画目录；已有同名 ZIP 时默认跳过并保留源目录。可以先预览，不修改任何文件：
+
+```bash
+python rounman/zip_items.py "rounman/download/rouman5/第1页" --dry-run
+```
+
+需要替换已有 ZIP 时使用 `--overwrite`。压缩应在该页下载完成后执行；之后再次运行下载脚本，会重新创建已删除的漫画目录。
 
 如果站点结构发生变化，可以先用更详细日志定位：
 

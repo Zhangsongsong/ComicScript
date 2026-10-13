@@ -15,6 +15,7 @@ from rounman.comic_scraper import (
     discover_book_links,
     existing_chapter_directory,
     extract_image_urls,
+    progress_page_number,
     safe_name,
     quarantine_foreign_chapter_directories,
     verify_image,
@@ -69,12 +70,46 @@ class MemoryCrawler(ComicCrawler):
         return self.pages[url]
 
 
+class TrackingCrawler(MemoryCrawler):
+    def __init__(self, output_dir, pages, images):
+        super().__init__(output_dir, pages, images)
+        self.fetched = []
+
+    def fetch(self, url, referer=None):
+        self.fetched.append(url)
+        return super().fetch(url, referer=referer)
+
+
+class PlanningCrawler(MemoryCrawler):
+    def __init__(self, output_dir, pages):
+        super().__init__(output_dir, pages, {})
+        self.chapter_directories = []
+
+    def download_chapter(
+        self,
+        chapter_url,
+        chapter_dir,
+        book_url,
+        chapter_number_value,
+        chapter_title,
+        progress_state=None,
+    ):
+        self.chapter_directories.append(chapter_dir.name)
+        return True
+
+
 class FailingCrawler(ComicCrawler):
     def fetch(self, url, referer=None):
         raise RequestException("Connection reset by peer")
 
 
 class ScraperParsingTests(unittest.TestCase):
+    def test_uses_zero_for_unpaged_list_and_query_value_for_other_pages(self):
+        start_url = "https://rouman5.com/books?continued=false"
+        self.assertEqual(progress_page_number(start_url, start_url), 0)
+        self.assertEqual(progress_page_number(f"{start_url}&page=1", start_url), 1)
+        self.assertEqual(progress_page_number(f"{start_url}&page=53", start_url), 53)
+
     def test_discovers_books_and_pages_without_treating_chapters_as_books(self):
         html = """
         <header class="site-header"><a href="/home">Home</a></header>
@@ -136,6 +171,31 @@ class ScraperParsingTests(unittest.TestCase):
         )
         self.assertEqual(chapter_url_index(chapters[0][0], book_url), 0)
         self.assertEqual(chapter_url_index(chapters[-1][0], book_url), 53)
+
+    def test_duplicate_chapter_titles_use_url_index_in_directory_name(self):
+        book_url = "https://rouman5.com/books/demo"
+        pages = {
+            book_url: """
+                <h1>Demo</h1>
+                <section aria-label="章節目錄">
+                  <a class="site-chapter-link" href="/books/demo/14">
+                    <span title="第15話 Demo">第15話 Demo</span>
+                  </a>
+                  <a class="site-chapter-link" href="/books/demo/15">
+                    <span title="第15話 Demo">第15話 Demo</span>
+                  </a>
+                </section>
+            """
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            crawler = PlanningCrawler(Path(directory), pages)
+
+            crawler.download_book(book_url, Path(directory) / "第0页")
+
+            self.assertEqual(
+                crawler.chapter_directories,
+                ["第15話 Demo [14]", "第15話 Demo [15]"],
+            )
 
     def test_renames_existing_chapter_directory_from_manifest(self):
         chapter_url = "https://rouman5.com/books/demo/1"
@@ -228,7 +288,7 @@ class ScraperParsingTests(unittest.TestCase):
             crawler = MemoryCrawler(root, pages, images)
             crawler.download(start_url)
 
-            chapter = root / "rouman5/第1页/Demo/第1话"
+            chapter = root / "rouman5/第0页/Demo/第1话"
             (chapter / "0001.jpg").unlink()
             (chapter / "0002.jpg").write_bytes(b"broken")
             crawler.download(start_url)
@@ -270,7 +330,7 @@ class ScraperParsingTests(unittest.TestCase):
             )
             self.assertTrue(crawler.had_errors)
             self.assertEqual(progress["pages"][start_url]["status"], "error")
-            self.assertEqual(progress["pending_pages"], [{"number": 1, "url": start_url}])
+            self.assertEqual(progress["pending_pages"], [{"number": 0, "url": start_url}])
             output = "\n".join(logs.output)
             self.assertIn("--proxy", output)
             self.assertIn("本次未完成", output)
@@ -290,6 +350,67 @@ class ScraperParsingTests(unittest.TestCase):
 
             progress = json.loads((root / "rouman5/progress.json").read_text(encoding="utf-8"))
             self.assertEqual(progress["pending_pages"], [{"number": 2, "url": second_url}])
+
+    def test_resume_prioritizes_interrupted_page_before_earlier_failed_page(self):
+        base = "https://example.test"
+        start_url = f"{base}/books?continued=false"
+        first_url = f"{start_url}&page=1"
+        second_url = f"{start_url}&page=2"
+        pages = {first_url: "<p>first</p>", second_url: "<p>second</p>"}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            progress_dir = root / "rouman5"
+            progress_dir.mkdir()
+            (progress_dir / "progress.json").write_text(
+                json.dumps(
+                    {
+                        "site": "rouman5",
+                        "start_url": start_url,
+                        "current": {"page_number": 2, "page_url": second_url},
+                        "pending_pages": [{"number": 1, "url": first_url}],
+                        "pages": {first_url: {"status": "incomplete"}},
+                        "books": {},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            crawler = TrackingCrawler(root, pages, {})
+
+            crawler.download(start_url, max_pages=1)
+
+            self.assertEqual(crawler.fetched, [second_url])
+            progress = json.loads((progress_dir / "progress.json").read_text(encoding="utf-8"))
+            self.assertEqual(progress["pending_pages"], [{"number": 1, "url": first_url}])
+
+    def test_migrates_unpaged_books_from_legacy_first_page_to_zero_page(self):
+        start_url = "https://example.test/books?continued=false"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            base_dir = root / "rouman5"
+            old_book = base_dir / "第1页/Demo"
+            old_book.mkdir(parents=True)
+            (old_book / "marker.txt").write_text("ok", encoding="utf-8")
+            crawler = ComicCrawler(root)
+            crawler.progress_path = base_dir / "progress.json"
+            crawler.progress = {
+                "start_url": start_url,
+                "pages": {start_url: {"number": 1, "status": "completed"}},
+                "books": {
+                    "https://example.test/books/demo": {
+                        "title": "Demo",
+                        "page_url": start_url,
+                        "page_number": 1,
+                    }
+                },
+                "pending_pages": [],
+                "current": None,
+            }
+
+            crawler.migrate_zero_page_layout(start_url, base_dir)
+
+            self.assertTrue((base_dir / "第0页/Demo/marker.txt").is_file())
+            self.assertFalse(old_book.exists())
+            self.assertEqual(crawler.progress["pages"][start_url]["number"], 0)
 
 
 if __name__ == "__main__":
