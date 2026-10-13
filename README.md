@@ -68,19 +68,25 @@ python rounman/comic_scraper.py --proxy http://127.0.0.1:实际端口 --workers 
 
 ## 逐项压缩
 
-漫画下载完成后，可以传入某一页的目录，将该目录下的每部漫画分别压缩。无 `page` 参数的入口页保存为 `第0页`，`page=1` 保存为 `第1页`。例如处理 `page=1`：
+漫画下载完成后，可以将某一页目录下的每部漫画分别压缩。无 `page` 参数的入口页保存为 `第0页`，`page=1` 保存为 `第1页`。
 
-```bash
-python rounman/zip_items.py "rounman/download/rouman5/第1页"
+打开 `rounman/zip_items.py`，修改文件顶部的路径变量：
+
+```python
+TARGET_DIRECTORY = Path(
+    "/Users/songzhouzhang/Mine/Github/ComicScript/rounman/download/rouman5/第1页"
+)
 ```
 
-脚本会生成 `漫画名.zip`。每个 ZIP 写入并校验成功后，才会删除对应的漫画目录；已有同名 ZIP 时默认跳过并保留源目录。可以先预览，不修改任何文件：
+然后在 PyCharm 中直接运行 `zip_items.py`，不需要填写命令行参数。脚本会生成 `漫画名.zip`。每个 ZIP 写入并校验成功后，才会删除对应的漫画目录；已有同名 ZIP 时默认跳过并保留源目录。
 
-```bash
-python rounman/zip_items.py "rounman/download/rouman5/第1页" --dry-run
+需要先预览且不修改任何文件时，将配置改为：
+
+```python
+DRY_RUN = True
 ```
 
-需要替换已有 ZIP 时使用 `--overwrite`。压缩应在该页下载完成后执行；之后再次运行下载脚本，会重新创建已删除的漫画目录。
+需要替换已有 ZIP 时，将 `OVERWRITE_EXISTING_ZIP` 改为 `True`。压缩应在该页下载完成后执行；之后再次运行下载脚本，会重新创建已删除的漫画目录。
 
 如果站点结构发生变化，可以先用更详细日志定位：
 
