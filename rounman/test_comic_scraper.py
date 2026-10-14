@@ -291,14 +291,31 @@ class ScraperParsingTests(unittest.TestCase):
             chapter = root / "rouman5/第0页/Demo/第1话"
             (chapter / "0001.jpg").unlink()
             (chapter / "0002.jpg").write_bytes(b"broken")
+
+            # Simulate an interrupted run on page 0. Completed pages are not
+            # rescanned automatically by the forward-only page scheduler.
+            progress_path = root / "rouman5/progress.json"
+            interrupted = json.loads(progress_path.read_text(encoding="utf-8"))
+            interrupted["current"] = {
+                "page_number": 0,
+                "page_url": start_url,
+                "status": "in_progress",
+            }
+            progress_path.write_text(json.dumps(interrupted), encoding="utf-8")
             crawler.download(start_url)
 
             self.assertTrue(verify_image(chapter / "0001.jpg"))
             self.assertTrue(verify_image(chapter / "0002.jpg"))
             progress = json.loads((root / "rouman5/progress.json").read_text(encoding="utf-8"))
+            page_progress = json.loads(
+                (root / "rouman5/第0页/progress.json").read_text(encoding="utf-8")
+            )
             self.assertIsNone(progress["current"])
             self.assertEqual(progress["pending_pages"], [])
-            self.assertEqual(progress["books"][f"{base}/book/demo"]["status"], "completed")
+            self.assertNotIn("books", progress)
+            self.assertEqual(progress["pages_total"], 1)
+            self.assertEqual(page_progress["page_number"], 0)
+            self.assertEqual(page_progress["books"][f"{base}/book/demo"]["status"], "completed")
 
     def test_proxy_is_used_for_page_and_image_requests(self):
         crawler = ComicCrawler(Path("download"), proxy="http://127.0.0.1:7890")
@@ -318,7 +335,7 @@ class ScraperParsingTests(unittest.TestCase):
         self.assertIn("HTTP/Mixed Port", output)
         self.assertIn("不会创建代理服务", output)
 
-    def test_failed_listing_page_is_retained_and_reported_as_incomplete(self):
+    def test_failed_listing_page_is_recorded_but_not_requeued(self):
         start_url = "https://example.test/books?continued=false"
         with tempfile.TemporaryDirectory() as directory:
             crawler = FailingCrawler(Path(directory), timeout=1)
@@ -328,9 +345,14 @@ class ScraperParsingTests(unittest.TestCase):
             progress = json.loads(
                 (Path(directory) / "rouman5/progress.json").read_text(encoding="utf-8")
             )
+            page_progress = json.loads(
+                (Path(directory) / "rouman5/第0页/progress.json").read_text(encoding="utf-8")
+            )
             self.assertTrue(crawler.had_errors)
             self.assertEqual(progress["pages"][start_url]["status"], "error")
-            self.assertEqual(progress["pending_pages"], [{"number": 0, "url": start_url}])
+            self.assertEqual(progress["pending_pages"], [])
+            self.assertEqual(page_progress["page"]["status"], "error")
+            self.assertEqual(page_progress["books"], {})
             output = "\n".join(logs.output)
             self.assertIn("--proxy", output)
             self.assertIn("本次未完成", output)
@@ -351,7 +373,7 @@ class ScraperParsingTests(unittest.TestCase):
             progress = json.loads((root / "rouman5/progress.json").read_text(encoding="utf-8"))
             self.assertEqual(progress["pending_pages"], [{"number": 2, "url": second_url}])
 
-    def test_resume_prioritizes_interrupted_page_before_earlier_failed_page(self):
+    def test_resume_prioritizes_interrupted_page_and_drops_earlier_failed_page(self):
         base = "https://example.test"
         start_url = f"{base}/books?continued=false"
         first_url = f"{start_url}&page=1"
@@ -380,7 +402,46 @@ class ScraperParsingTests(unittest.TestCase):
 
             self.assertEqual(crawler.fetched, [second_url])
             progress = json.loads((progress_dir / "progress.json").read_text(encoding="utf-8"))
-            self.assertEqual(progress["pending_pages"], [{"number": 1, "url": first_url}])
+            self.assertEqual(progress["pending_pages"], [])
+
+    def test_incomplete_earlier_pages_do_not_block_newer_pages(self):
+        base = "https://example.test"
+        start_url = f"{base}/books?continued=false"
+        first_url = f"{start_url}&page=1"
+        third_url = f"{start_url}&page=3"
+        fourth_url = f"{start_url}&page=4"
+        pages = {fourth_url: "<p>fourth</p>"}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            progress_dir = root / "rouman5"
+            progress_dir.mkdir()
+            (progress_dir / "progress.json").write_text(
+                json.dumps(
+                    {
+                        "site": "rouman5",
+                        "start_url": start_url,
+                        "current": None,
+                        "pending_pages": [
+                            {"number": 1, "url": first_url},
+                            {"number": 3, "url": third_url},
+                            {"number": 4, "url": fourth_url},
+                        ],
+                        "pages": {
+                            first_url: {"number": 1, "status": "incomplete"},
+                            third_url: {"number": 3, "status": "incomplete"},
+                        },
+                        "books": {},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            crawler = TrackingCrawler(root, pages, {})
+
+            crawler.download(start_url, max_pages=1)
+
+            self.assertEqual(crawler.fetched, [fourth_url])
+            progress = json.loads((progress_dir / "progress.json").read_text(encoding="utf-8"))
+            self.assertEqual(progress["pending_pages"], [])
 
     def test_migrates_unpaged_books_from_legacy_first_page_to_zero_page(self):
         start_url = "https://example.test/books?continued=false"
@@ -411,6 +472,63 @@ class ScraperParsingTests(unittest.TestCase):
             self.assertTrue((base_dir / "第0页/Demo/marker.txt").is_file())
             self.assertFalse(old_book.exists())
             self.assertEqual(crawler.progress["pages"][start_url]["number"], 0)
+
+    def test_splits_legacy_root_progress_into_page_progress_files(self):
+        start_url = "https://example.test/books?continued=false"
+        first_url = f"{start_url}&page=1"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            base_dir = root / "rouman5"
+            base_dir.mkdir()
+            legacy = {
+                "site": "rouman5",
+                "start_url": start_url,
+                "created_at": "2026-01-01T00:00:00+00:00",
+                "current": {
+                    "page_number": 1,
+                    "page_url": first_url,
+                    "book_url": "https://example.test/books/demo",
+                    "status": "in_progress",
+                },
+                "pending_pages": [{"number": 1, "url": first_url}],
+                "pages": {
+                    start_url: {"number": 0, "status": "completed"},
+                    first_url: {"number": 1, "status": "in_progress"},
+                },
+                "books": {
+                    "https://example.test/books/zero": {
+                        "page_number": 0,
+                        "page_url": start_url,
+                        "title": "Zero",
+                        "status": "completed",
+                    },
+                    "https://example.test/books/demo": {
+                        "page_number": 1,
+                        "page_url": first_url,
+                        "title": "Demo",
+                        "status": "in_progress",
+                    },
+                },
+                "page_directory_layout": "zero_based_query_parameter",
+            }
+            (base_dir / "progress.json").write_text(json.dumps(legacy), encoding="utf-8")
+            crawler = ComicCrawler(root)
+
+            pending = crawler.initialize_progress(start_url, base_dir)
+
+            root_progress = json.loads((base_dir / "progress.json").read_text(encoding="utf-8"))
+            zero_progress = json.loads((base_dir / "第0页/progress.json").read_text(encoding="utf-8"))
+            first_progress = json.loads((base_dir / "第1页/progress.json").read_text(encoding="utf-8"))
+            self.assertEqual(pending, [(1, first_url)])
+            self.assertNotIn("books", root_progress)
+            self.assertEqual(root_progress["pages_total"], 2)
+            self.assertEqual(
+                root_progress["current"],
+                {"page_number": 1, "page_url": first_url, "status": "in_progress"},
+            )
+            self.assertEqual(list(zero_progress["books"]), ["https://example.test/books/zero"])
+            self.assertEqual(list(first_progress["books"]), ["https://example.test/books/demo"])
+            self.assertEqual(first_progress["current"]["book_url"], "https://example.test/books/demo")
 
 
 if __name__ == "__main__":

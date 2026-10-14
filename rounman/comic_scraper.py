@@ -34,10 +34,12 @@ from PIL import Image
 
 
 DEFAULT_START_URL = "https://rouman5.com/books?continued=false"
-DEFAULT_OUTPUT_DIR = Path("download")
+# Always use rounman/download, independent of the PyCharm working directory.
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent / "download"
 SITE_NAME = "rouman5"
 MANIFEST_NAME = "manifest.json"
 PROGRESS_NAME = "progress.json"
+PROGRESS_SCHEMA_VERSION = 2
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36"
@@ -504,6 +506,8 @@ class ComicCrawler:
         self.session.headers.update({"User-Agent": USER_AGENT, "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"})
         self.progress_path: Path | None = None
         self.progress: dict = {}
+        self.active_page_number: int | None = None
+        self.active_page_url: str | None = None
         self.had_errors = False
 
     def log_request_error(self, context: str, url: str, error: RequestException) -> None:
@@ -525,11 +529,110 @@ class ComicCrawler:
                 "也可以启用相同代理后使用 --proxy http://127.0.0.1:端口 重试。"
             )
 
-    def save_progress(self) -> None:
+    def page_progress_path(self, page_number: int) -> Path:
+        if self.progress_path is None:
+            raise RuntimeError("进度文件尚未初始化")
+        return self.progress_path.parent / safe_name(f"第{page_number}页") / PROGRESS_NAME
+
+    def known_page_pairs(self) -> list[tuple[int, str]]:
+        """Return processed pages that need their own detailed progress file."""
+
+        pairs: dict[str, int] = {}
+        for page_url, page_state in self.progress.get("pages", {}).items():
+            if isinstance(page_state, dict):
+                pairs[page_url] = int(page_state.get("number") or progress_page_number(page_url, self.progress["start_url"]))
+        for book_state in self.progress.get("books", {}).values():
+            if not isinstance(book_state, dict) or not book_state.get("page_url"):
+                continue
+            page_url = book_state["page_url"]
+            pairs[page_url] = int(book_state.get("page_number") or progress_page_number(page_url, self.progress["start_url"]))
+        current = self.progress.get("current")
+        if isinstance(current, dict) and current.get("page_url"):
+            pairs[current["page_url"]] = int(
+                current.get("page_number")
+                if current.get("page_number") is not None
+                else progress_page_number(current["page_url"], self.progress["start_url"])
+            )
+        return sorted(((number, url) for url, number in pairs.items()), key=lambda item: (item[0], item[1]))
+
+    def page_progress_payload(self, page_number: int, page_url: str, updated_at: str) -> dict:
+        books = {
+            book_url: book_state
+            for book_url, book_state in self.progress.get("books", {}).items()
+            if isinstance(book_state, dict) and book_state.get("page_url") == page_url
+        }
+        current = self.progress.get("current")
+        page_current = current if isinstance(current, dict) and current.get("page_url") == page_url else None
+        return {
+            "schema_version": PROGRESS_SCHEMA_VERSION,
+            "site": SITE_NAME,
+            "start_url": self.progress.get("start_url"),
+            "page_number": page_number,
+            "page_url": page_url,
+            "created_at": self.progress.get("created_at", updated_at),
+            "updated_at": updated_at,
+            "page": self.progress.get("pages", {}).get(page_url, {"number": page_number}),
+            "current": page_current,
+            "books": books,
+        }
+
+    def root_progress_payload(self, updated_at: str) -> dict:
+        current = self.progress.get("current")
+        page_current = None
+        if isinstance(current, dict) and current.get("page_url"):
+            page_current = {
+                "page_number": current.get("page_number"),
+                "page_url": current.get("page_url"),
+                "status": current.get("status", "in_progress"),
+            }
+
+        page_numbers = [number for number, _ in self.known_page_pairs()]
+        page_numbers.extend(
+            int(item.get("number"))
+            for item in self.progress.get("pending_pages", [])
+            if isinstance(item, dict) and isinstance(item.get("number"), int)
+        )
+        pages_total = max(page_numbers, default=-1) + 1
+        return {
+            "schema_version": PROGRESS_SCHEMA_VERSION,
+            "site": SITE_NAME,
+            "start_url": self.progress.get("start_url"),
+            "created_at": self.progress.get("created_at", updated_at),
+            "updated_at": updated_at,
+            "page_directory_layout": self.progress.get("page_directory_layout"),
+            "pages_total": pages_total,
+            "current": page_current,
+            "pending_pages": self.progress.get("pending_pages", []),
+            "pages": self.progress.get("pages", {}),
+        }
+
+    def save_progress(self, save_all_pages: bool = False) -> None:
         if self.progress_path is None:
             return
-        self.progress["updated_at"] = utc_timestamp()
-        save_manifest(self.progress_path, self.progress)
+        updated_at = utc_timestamp()
+        self.progress["updated_at"] = updated_at
+
+        if save_all_pages:
+            page_pairs = self.known_page_pairs()
+        elif self.active_page_url is not None and self.active_page_number is not None:
+            page_pairs = [(self.active_page_number, self.active_page_url)]
+        else:
+            current = self.progress.get("current")
+            page_pairs = []
+            if isinstance(current, dict) and current.get("page_url"):
+                page_url = current["page_url"]
+                page_number = current.get("page_number")
+                if page_number is None:
+                    page_number = progress_page_number(page_url, self.progress["start_url"])
+                page_pairs.append((int(page_number), page_url))
+
+        # Detailed page files are written first. If the process stops between
+        # writes, the old root file still contains enough data for migration.
+        for page_number, page_url in page_pairs:
+            page_path = self.page_progress_path(page_number)
+            page_path.parent.mkdir(parents=True, exist_ok=True)
+            save_manifest(page_path, self.page_progress_payload(page_number, page_url, updated_at))
+        save_manifest(self.progress_path, self.root_progress_payload(updated_at))
 
     @staticmethod
     def pending_snapshot(pending: list[tuple[int, str]]) -> list[dict]:
@@ -593,6 +696,29 @@ class ComicCrawler:
                 "books": {},
             }
 
+        # Version 2 stores detailed book/chapter state in each page directory.
+        # Merge those files into memory so the downloader can keep using one
+        # runtime state while the persisted files stay small and page-scoped.
+        if not self.progress.get("books"):
+            self.progress["books"] = {}
+            root_current = self.progress.get("current")
+            for page_dir in sorted(base_dir.glob("第*页")):
+                page_progress = load_manifest(page_dir / PROGRESS_NAME)
+                if page_progress.get("start_url") != start_url:
+                    continue
+                page_url = page_progress.get("page_url")
+                page_state = page_progress.get("page")
+                if page_url and isinstance(page_state, dict):
+                    self.progress.setdefault("pages", {})[page_url] = page_state
+                self.progress["books"].update(page_progress.get("books", {}))
+                page_current = page_progress.get("current")
+                if (
+                    isinstance(root_current, dict)
+                    and isinstance(page_current, dict)
+                    and page_current.get("page_url") == root_current.get("page_url")
+                ):
+                    self.progress["current"] = page_current
+
         self.migrate_zero_page_layout(start_url, base_dir)
 
         pending: list[tuple[int, str]] = []
@@ -605,11 +731,14 @@ class ComicCrawler:
             page_url = item["url"]
             if page_url != (current or {}).get("page_url"):
                 page_state = self.progress.get("pages", {}).get(page_url, {})
-                if page_state.get("status") == "completed":
+                # A scanned page is never queued again, even if individual
+                # books failed. Its page progress file keeps those failures.
+                if page_state.get("status") in {"completed", "incomplete", "error"}:
                     continue
             pending.append((progress_page_number(page_url, start_url), page_url))
         if not pending:
-            pending.append((0, start_url))
+            if not self.progress.get("pages"):
+                pending.append((0, start_url))
 
         deduplicated: list[tuple[int, str]] = []
         seen: set[str] = set()
@@ -618,8 +747,8 @@ class ComicCrawler:
                 seen.add(url)
                 deduplicated.append((number, url))
         self.progress["pending_pages"] = self.pending_snapshot(deduplicated)
-        self.save_progress()
-        if len(deduplicated) > 1 or deduplicated[0][1] != start_url:
+        self.save_progress(save_all_pages=True)
+        if deduplicated and (len(deduplicated) > 1 or deduplicated[0][1] != start_url):
             current_page = (self.progress.get("current") or {}).get("page_url", deduplicated[0][1])
             LOGGER.info("发现上次下载进度，将从 %s 继续", current_page)
         return deduplicated
@@ -677,7 +806,6 @@ class ComicCrawler:
         base_dir.mkdir(parents=True, exist_ok=True)
         pending = self.initialize_progress(start_url, base_dir)
         resume_page_url = (self.progress.get("current") or {}).get("page_url")
-        deferred: list[tuple[int, str]] = []
         seen_pages: set[str] = set()
         seen_books: set[str] = set()
         pages_processed = 0
@@ -686,7 +814,7 @@ class ComicCrawler:
         def pending_pages() -> list[tuple[int, str]]:
             result: list[tuple[int, str]] = []
             seen: set[str] = set()
-            for item in [*pending, *deferred]:
+            for item in pending:
                 if item[1] not in seen:
                     seen.add(item[1])
                     result.append(item)
@@ -694,10 +822,6 @@ class ComicCrawler:
 
         def save_pending_pages() -> None:
             self.progress["pending_pages"] = self.pending_snapshot(pending_pages())
-
-        def defer_page(number: int, url: str) -> None:
-            if url not in {item_url for _, item_url in deferred}:
-                deferred.append((number, url))
 
         while pending:
             if max_pages is not None and pages_processed >= max_pages:
@@ -716,6 +840,8 @@ class ComicCrawler:
             if page_url in seen_pages:
                 continue
             seen_pages.add(page_url)
+            self.active_page_number = page_number
+            self.active_page_url = page_url
             page_state = self.progress.setdefault("pages", {}).setdefault(page_url, {})
             page_state.update({"number": page_number, "status": "in_progress", "started_at": utc_timestamp()})
             self.progress["current"] = {"page_number": page_number, "page_url": page_url, "status": "in_progress"}
@@ -728,7 +854,6 @@ class ComicCrawler:
                 self.log_request_error("列表页请求", page_url, error)
                 self.had_errors = True
                 page_state.update({"status": "error", "error": str(error), "updated_at": utc_timestamp()})
-                defer_page(page_number, page_url)
                 save_pending_pages()
                 self.progress["current"] = None
                 self.save_progress()
@@ -740,7 +865,7 @@ class ComicCrawler:
                 if discovered_url in seen_pages or discovered_url in {url for _, url in pending_pages()}:
                     continue
                 discovered_state = self.progress.get("pages", {}).get(discovered_url, {})
-                if discovered_state.get("status") == "completed":
+                if discovered_state.get("status") in {"completed", "incomplete", "error"}:
                     continue
                 number = discovered_number if discovered_number is not None else progress_page_number(discovered_url, start_url)
                 pending.append((number, discovered_url))
@@ -783,9 +908,8 @@ class ComicCrawler:
                     page_had_errors = True
                 self.save_progress()
             limit_reached = max_books is not None and books_processed >= max_books
-            page_needs_retry = page_had_errors or limit_reached
-            if page_needs_retry:
-                defer_page(page_number, page_url)
+            if limit_reached and page_url not in {url for _, url in pending}:
+                pending.append((page_number, page_url))
             page_state.update(
                 {
                     "status": "limited" if limit_reached else ("incomplete" if page_had_errors else "completed"),
@@ -793,7 +917,7 @@ class ComicCrawler:
                     "updated_at": utc_timestamp(),
                 }
             )
-            if not page_needs_retry:
+            if not page_had_errors and not limit_reached:
                 page_state.pop("error", None)
             self.progress["current"] = None
             save_pending_pages()
